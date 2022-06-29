@@ -8,202 +8,228 @@ Pedro Gabriel Gonçalves
 #include <string.h>
 #include <unistd.h>
 
+#define SETORES 256
+#define BYTES 10000
+
 #define GRAY "\x1B[0m"
 #define BOLD "\033[1m"
 #define NONE "\033[0m"
 #define GREEN "\x1B[32m"
 #define RED  "\x1b[31m"
+#define CYAN "\e[0;36m"
+#define RESET  "\e[0m"
+#define BLACK  "\e[40m"
 
-#define SETORES 256
-#define BYTES 512
 
 static FILE *diskfile;
-static int nsetores=0;
+static int nsetor=0;
 
-struct fs_setor{
-char name[1024];
-  int address;
-int pointers[SETORES];
+struct setor {
+	char nome[1024];
+  	int endereco;
+	int ponteiros[SETORES];
 };
 
-int disk_init( const char *filename, int n )
+int init_disco( const char *filename, int n )
 {
-  int newCreation = 0;
-diskfile = fopen(filename,"r+");
-if(!diskfile) {
-    diskfile = fopen(filename,"w+");
-    newCreation = 1;
-  };
-if(!diskfile) return 0;
+  	int cond = 0;
+	diskfile = fopen(filename,"r+");
+	if(!diskfile) 
+	{
+	    diskfile = fopen(filename,"w+");
+	    cond = 1;
+  	};
+	if(!diskfile) return 0;
 
-ftruncate(fileno(diskfile),n*BYTES);
+	ftruncate(fileno(diskfile),n*BYTES);
 
-nsetores = n;
-  if(newCreation == 0){
-return 1;
-  }
-  return 2;
+	nsetor = n;
+  	if(cond == 0)
+  		return 1;
+  		
+  	return 2;
 }
 
-static void sanity_check( int num)
+static void check( int n )
 {
-if(num<0) {
-printf("ERRO: numero do setor é negativo!\n");
-abort();
+	if(n<0) {
+		printf("ERRO: numero do setor (%d) Ã© negativo!\n",n);
+		abort();
+	}
+
+	if(n>=nsetor) {
+		printf("ERRO: numero do setor (%d) Ã© muito grande!\n",n);
+		abort();
+	}
 }
 
-if(num>=nsetores) {
-printf("ERRO: numero do setor é muito grande!\n");
-abort();
-}
-}
-
-
-void disk_write( int num, struct fs_setor data )
+void read_disco( int n, struct setor *data )
 {
-sanity_check(num);
-
-fseek(diskfile,num*BYTES,SEEK_SET);
-
-if(num >= 9) {
-if(fwrite(&data,sizeof(struct fs_setor),1,diskfile)==1) {
-return;
-} else {
-printf("ERRO: não foi possivel acessar o disco: %s\n",strerror(errno));
-abort();
+	check(n);
+  	if(n>= 9){
+		fseek(diskfile,n*BYTES,SEEK_SET);
+		if(fread(data,sizeof(struct setor),1,diskfile)==1) {
+			return;
+		}
+		else {
+			printf("ERRO: nÃ£o foi possivel acessar o disco: %s\n",strerror(errno));
+			abort();
+		}
+	} else {
+		printf("Erro: segmento ocupado pelo sistema\n");
+		return;
+	}
 }
-} else {
-printf("Erro: segmento ocupado pelo sistema\n");
-return;
-}
-}
 
-void disk_close()
+void write_disco( int n, struct setor data )
 {
-if(diskfile) {
-fclose(diskfile);
-diskfile = 0;
-}
+	check(n);
+
+	fseek(diskfile,n*BYTES,SEEK_SET);
+
+	if(n>= 9) {
+		if(fwrite(&data,sizeof(struct setor),1,diskfile)==1) 
+			return;
+		 else {
+			printf("ERRO: nÃ£o foi possivel acessar o disco: %s\n",strerror(errno));
+			abort();
+		}
+	} else {
+		printf("Erro: segmento ocupado pelo sistema\n");
+		return;
+	}
 }
 
-struct fs_setor Setor(char* name, int espaco)
+void close_disco()
 {
-  struct fs_setor setor;
+	if(diskfile) {
+		fclose(diskfile);
+		diskfile = 0;
+	}
+}
+
+struct setor func_setor(char* nome, int espaco){
+  struct setor setorr;
   int i = 0;
-  strcpy(setor.name, name);
-  for(i = 0; i< SETORES -1; i++){
-    setor.pointers[i] = 0;
-  }
-  setor.address = espaco;
-  return setor;
+  strcpy(setorr.nome, nome);
+  for(i = 0; i< SETORES -1; i++)
+    setorr.ponteiros[i] = 0;
+  
+  setorr.endereco = espaco;
+  return setorr;
 }
 
-
-int fs_create_home(){
-struct fs_setor setor;
-setor = Setor("Home", 9);
-disk_write(9, setor);
-return 1;
-}
-
-int main( int argc, char *argv[] ){
-
-char nome_disco[]="Disco";
-
-char line[1024];
-char cmd[1024];
-char arg1[1024];
-int args;
-  int diskCreated = disk_init(nome_disco, SETORES);
- 
-if(diskCreated == 0)
-{
-printf("Não foi possivel inicializar %s: %s\n",argv[1],strerror(errno));
-return 1;
-}
-else if (diskCreated == 2)
-{
-    fs_create_home();
-  }  
-  printf(GREEN"      ░░░░░░░░░░░░░░░░░░░░░░\n");
-  printf("      ░░┌──┐░░░░░░░░░░┌──┐░░\n      ░╔╡▐▐╞╝░░┌──┐░░╔╡▐▐╞╝░\n      ░░└╥╥┘░░╚╡▌▌╞╗░░└╥╥┘░░\n      ░░░╚╚░░░░└╥╥┘░░░░╚╚░░░\n      ░░░░░░░░░░╝╝░░░░░░░░░░");
- 
-printf("\n      ░░░░░░░░░░░░░░░░░░░░░░");
-printf(RED"\n -----------------------------------------------");
-printf("\n|Bem vindo ao %s com %d setores de %d bytes|\n",nome_disco,SETORES,BYTES);
-printf(" -----------------------------------------------\n"GRAY);
-while(1) {
-printf("# ");
-fflush(stdout);
-
-if(!fgets(line,sizeof(line),stdin)) break;
-
-if(line[0]=='\n') continue;
-line[strlen(line)-1] = 0;
-
-args = sscanf(line,"%s %s",cmd,arg1);
-    fflush(stdout);
-if(args==0) continue;
-
-if(!strcmp(cmd,"sair")) {
-break;
-}
-else if(!strcmp(cmd,"ajuda")) {
-printf(BOLD"Comandos:\n");
-
-printf("criad caminho\\nome_do_diretorio\n");
-printf("criaa caminho\\nome_do_arquivo tamanho\n");
-printf("removed caminho\\nome_do_diretorio\n");
-printf("removea caminho\\nome_do_arquivo\n");
-printf("verd caminho\n");
-printf("verset caminho\\nome_do_arquivo\n");
-printf("mapa\n");
-printf("arvore\n");
-printf("ajuda\n");
-printf("sair\n"NONE);
-
-}
-}
-
-printf("O %s agradece! Volte sempre!.\n",nome_disco);
-disk_close();
-
-return 0;
-}
-
-int fs_create_home(){
-	struct fs_setor setor;
-	setor = Setor("Home", 9);
-	disk_write(9, setor);
+int create_home(){
+	struct setor setorr;
+	setorr = func_setor("Home", 9);
+	write_disco(9, setorr);
 	return 1;
 }
 
+int criad(char* path)
+{
+	struct setor setorr;
+  	struct setor setorrr;
+  	int aux = 0;
+	read_disco(9, &setorr);
+
+  	char delim[] = "\\";
+
+	char *ptr = strtok(path, delim);
+	while(ptr != NULL && aux < 8){
+		int i = 0;
+		int found = 0;
+		for(i = 0; i < SETORES -1 && found == 0; i++){
+			fflush(stdout);
+			if(setorr.ponteiros[i] != 0){
+				read_disco(setorr.ponteiros[i], &setorrr);
+				if(!strcmp(ptr, setorrr.nome)) {
+					printf("Dir %s existe\n", setorrr.nome);
+					found = 1;
+					read_disco(setorr.ponteiros[i], &setorr);
+				}
+			}
+		}
+		if(found == 0){
+      		int done = 0;
+			for(i = 9; i < SETORES-1 && done == 0; i++){
+			
+				read_disco(i, &setorrr);
+				if(setorrr.nome[0] == 0){
+					setorrr = func_setor(ptr, i);
+					write_disco(i, setorrr);
+          
+          			int auxiliar = 0;
+          
+					while(done == 0 && auxiliar < 255) {
+						if(setorr.ponteiros[auxiliar] == 0){
+						setorr.ponteiros[auxiliar] = i;
+						fflush(stdout);
+						done = 1;
+						}
+						auxiliar ++;
+					}
+					fflush(stdout);
+					write_disco(setorr.endereco, setorr);
+				}
+			}
+			printf("Criado na pos %d\n", i-1);
+			read_disco(i-1, &setorr);
+		}
+		ptr = strtok(NULL, delim);
+		aux++;
+		fflush(stdout);
+	}
+	if(aux >= 8)
+    		printf("O tamanho maximo Ã© 8\n");
+
+	fflush(stdout);
+	return 1;
+}
+
+int mapa(){
+	int i = 0;
+	struct setor setorr;
+	
+	for(i=0; i< SETORES-1; i++){
+		if(i < 10)
+			printf(BLACK" "RESET);
+		else{
+			read_disco(i,&setorr);
+			if(setorr.nome[0] == 0)
+				printf(CYAN".");
+			else 
+				printf(RED".");
+	
+		}
+  	}
+	printf("\n"RESET);
+	fflush(stdout);
+	return 1;
+}
+
+
 int main( int argc, char *argv[] ){
-
-	char nome_disco[]="Disco";
-
 	char line[1024];
 	char cmd[1024];
 	char arg1[1024];
 	int args;
-  	int diskCreated = disk_init(nome_disco, SETORES);
+	char nome_disco[1024]="Disk";
+  	int diskCreated = init_disco(nome_disco, SETORES);
   	
-	if(diskCreated == 0) 
-	{
-		printf("Não foi possivel inicializar %s: %s\n",argv[1],strerror(errno));
+	if(diskCreated == 0) {
+		printf("NÃ£o foi possivel inicializar %s: %s\n",nome_disco,strerror(errno));
 		return 1;
-	} 
-	else if (diskCreated == 2) 
-	{
-    		fs_create_home();
-  	}	   
-  	printf("      ░░░░░░░░░░░░░░░░░░░░░░\n");
-  	printf("      ░░┌──┐░░░░░░░░░░┌──┐░░\n      ░╔╡▐▐╞╝░░┌──┐░░╔╡▐▐╞╝░\n      ░░└╥╥┘░░╚╡▌▌╞╗░░└╥╥┘░░\n      ░░░╚╚░░░░└╥╥┘░░░░╚╚░░░\n      ░░░░░░░░░░╝╝░░░░░░░░░░");
+	} else if (diskCreated == 2) {
+    	create_home();
+  	}
+printf(GREEN"      â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘\n");
+  	printf("      â–‘â–‘â”Œâ”€â”€â”â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â”Œâ”€â”€â”â–‘â–‘\n      â–‘â•”â•¡â–â–â•žâ•â–‘â–‘â”Œâ”€â”€â”â–‘â–‘â•”â•¡â–â–â•žâ•â–‘\n      â–‘â–‘â””â•¥â•¥â”˜â–‘â–‘â•šâ•¡â–Œâ–Œâ•žâ•—â–‘â–‘â””â•¥â•¥â”˜â–‘â–‘\n      â–‘â–‘â–‘â•šâ•šâ–‘â–‘â–‘â–‘â””â•¥â•¥â”˜â–‘â–‘â–‘â–‘â•šâ•šâ–‘â–‘â–‘\n      â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â•â•â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘");
   					 
-	printf("\n      ░░░░░░░░░░░░░░░░░░░░░░");
-	printf("\n -----------------------------------------------");
-	printf("\n|Bem vindo ao %s com %d setores de %d bytes|\n",nome_disco,SETORES,BYTES);
-	printf(" -----------------------------------------------\n");
+	printf("\n      â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘");
+	printf(RED"\n -----------------------------------------------");
+	printf("\n|Bem vindo ao %s com %d setores de 512 bytes|\n",nome_disco,SETORES);
+	printf(" -----------------------------------------------\n"GRAY);
 	while(1) {
 		printf("# ");
 		fflush(stdout);
@@ -216,15 +242,40 @@ int main( int argc, char *argv[] ){
 		args = sscanf(line,"%s %s",cmd,arg1);
     		fflush(stdout);
 		if(args==0) continue;
-
 		if(!strcmp(cmd,"sair")) {
 				break;
 			} 
+		else if(!strcmp(cmd,"ajuda")) {
+				printf(BOLD"Comandos:\n");
+			
+				printf("criad caminho\\nome_do_diretorio		->cria diretorio\n");
+				printf("criaa caminho\\nome_do_arquivo tamanho	->cria arquivo\n");
+				printf("removed caminho\\nome_do_diretorio	->deleta diretorio\n");
+				printf("removea caminho\\nome_do_arquivo		->deleta arquivo\n");
+				printf("verd caminho				->mostra diretorio\n");
+				printf("verset caminho\\nome_do_arquivo		->mostra granulos ocupados pelo arquivo\n");
+				printf("mapa					->mostra tabela de granulos\n");
+				printf("arvore					->arvore de diretorios\n");
+				printf("ajuda					->listar comandos\n");		
+				printf("sair					->sair do simulador\n"NONE);
+			}
+		else if(!strcmp(cmd, "mapa")){
+		      	mapa();
+		      	
+		    	} 
+		else if(!strcmp(cmd,"criad")) {
+			if(args==2) {
+				criad(arg1);
+			} else {
+				printf("criad caminho\\nome_do_diretorio\n");
+			}
+		} 
+		
+		
 	}
 
 	printf("O %s agradece! Volte sempre!.\n",nome_disco);
-	disk_close();
+	close_disco();
 	
 	return 0;
 }
-
