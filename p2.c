@@ -372,6 +372,11 @@ int main(int argc, char *argv[]){
                 verd(arg);
             }
         }
+        else if(strcmp(cmd,"removea")==0) {
+            if(args==2) {
+                removea(arg);
+            }
+        }
         //fim if e elses dos comandos
     }
 
