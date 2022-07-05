@@ -200,24 +200,24 @@ int criad(char* path) //cria diretorio
         }
         if(aux2 == 0){ //n achou o diretorio, entao ira escreve-lo
             cond = 0;
-        for(i = 9; i < SETORES-1 && cond == 0; i++){
-            read_disco(i, &setorrr);
-            if(setorrr.nome[0] == 0){
-                setorrr = func_setor(ptr, i,0);
-                write_disco(i, setorrr);        
-                j = 0;                      
-                while(cond == 0 && j < SETORES-1) {
-                    if(setorr.ponteiros[j] == 0){
-                        setorr.ponteiros[j] = i; //ponteiro diretorio
-                        fflush(stdout);
-                        cond = 1;
+            for(i = 9; i < SETORES-1 && cond == 0; i++){
+                read_disco(i, &setorrr);
+                if(setorrr.nome[0] == 0){
+                    setorrr = func_setor(ptr, i,0);
+                    write_disco(i, setorrr);        
+                    j = 0;                      
+                    while(cond == 0 && j < SETORES-1) {
+                        if(setorr.ponteiros[j] == 0){
+                            setorr.ponteiros[j] = i; //ponteiro diretorio
+                            fflush(stdout);
+                            cond = 1;
+                        }
+                        j ++;
                     }
-                    j ++;
+                    fflush(stdout);
+                    write_disco(setorr.endereco, setorr);
                 }
-                fflush(stdout);
-                write_disco(setorr.endereco, setorr);
             }
-        }
         printf("Criado na pos %d\n", i-1);
         read_disco(i-1, &setorr);
         }
@@ -252,32 +252,18 @@ int removed(char* path) //cria diretorio
                 if(strcmp(ptr, setorrr.nome)==0) {//achou
                     printf("Diretorio %s\n", setorrr.nome);
                     aux2 = 1;
+                    endereco = setorr.ponteiros[i];
                     read_disco(setorr.ponteiros[i], &setorr);
                 }
             }
         }
         if(aux2 == 1){ //achou o diretorio, entao ira rescreve-lo
-            cond = 0;
-            for(i = 9; i < SETORES-1 && cond == 0; i++){
-                read_disco(i, &setorrr);
-                if(strcmp(ptr, setorrr.nome)==0){
-                    setorrr = func_setor("", 0,0);
-                    write_disco(i, setorrr);        
-                    j = 0;                      
-                    while(cond == 0 && j < SETORES-1) {
-                        if(setorr.ponteiros[j] == i){
-                            setorr.ponteiros[j] = 0; //ponteiro diretorio
-                            fflush(stdout);
-                            cond = 1;
-                        }
-                        j ++;
-                    }
-                    fflush(stdout);
-                    write_disco(setorr.endereco, setorr);
-                }
-            }
+            setorrr = func_setor("", 0,0);
+            write_disco(endereco, setorrr);
+            fflush(stdout);
+            write_disco(setorr.endereco, setorr);
             printf("Excluido na pos %d\n", i-1);
-            read_disco(i-1, &setorr);
+            //read_disco(i-1, &setorr);
         }
         ptr = strtok(NULL, "\\");
         aux++;
