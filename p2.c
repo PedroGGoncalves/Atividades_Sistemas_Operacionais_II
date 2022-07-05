@@ -33,17 +33,6 @@ struct setor {
     int tam;
 };
 
-int removea(const char * filename){
-    if (remove(filename) == 0) {
-        printf("Arquivo deletado\n");
-    } 
-    else {
-        printf("Arquivo não deletado\n");
-    }
-    return 0;
-}
-
-
 int init_disco(const char *filename){ //inicia disco
     int cond = 0;
     diskfile = fopen(filename,"r+");
@@ -243,7 +232,63 @@ int criad(char* path) //cria diretorio
     return 1;
 }
 
+int removed(char* path) //cria diretorio
+{
+    struct setor setorr;
+    struct setor setorrr;
+    int endereco;
+    int aux = 0,i, aux2,cond,j;
+    read_disco(9, &setorr);
 
+    char *ptr = strtok(path, "\\");
+
+    while(ptr != NULL && aux < 8){//enquanto n for null continua (pode ter subdiretorio)
+        i = 0;
+        aux2 = 0;
+        for(i = 0; i < SETORES -1 && aux2 == 0; i++){ //procurar diretorio
+            fflush(stdout);
+            if(setorr.ponteiros[i] != 0){
+                read_disco(setorr.ponteiros[i], &setorrr);
+                if(strcmp(ptr, setorrr.nome)==0) {//achou
+                    printf("Diretorio %s\n", setorrr.nome);
+                    aux2 = 1;
+                    read_disco(setorr.ponteiros[i], &setorr);
+                }
+            }
+        }
+        if(aux2 == 1){ //achou o diretorio, entao ira rescreve-lo
+            cond = 0;
+            for(i = 9; i < SETORES-1 && cond == 0; i++){
+                read_disco(i, &setorrr);
+                if(strcmp(ptr, setorrr.nome)==0){
+                    setorrr = func_setor("", 0,0);
+                    write_disco(i, setorrr);        
+                    j = 0;                      
+                    while(cond == 0 && j < SETORES-1) {
+                        if(setorr.ponteiros[j] == i){
+                            setorr.ponteiros[j] = 0; //ponteiro diretorio
+                            fflush(stdout);
+                            cond = 1;
+                        }
+                        j ++;
+                    }
+                    fflush(stdout);
+                    write_disco(setorr.endereco, setorr);
+                }
+            }
+            printf("Excluido na pos %d\n", i-1);
+            read_disco(i-1, &setorr);
+        }
+        ptr = strtok(NULL, "\\");
+        aux++;
+        fflush(stdout);
+    }
+    if(aux >= 8)
+        printf("O tamanho maximo é 8\n");
+
+    fflush(stdout);
+    return 1;
+}
 
 int verd(char* path){
     struct setor setorr;
@@ -361,6 +406,11 @@ int main(int argc, char *argv[]){
                 criad(arg);
             }
         }
+        else if(strcmp(cmd,"removed")==0) {
+            if(args==2) {
+                removed(arg);
+            }
+        }
         else if(strcmp(cmd, "arvore")==0){
             struct setor setorr;
             read_disco(9, &setorr);
@@ -370,11 +420,6 @@ int main(int argc, char *argv[]){
         else if(strcmp(cmd,"verd")==0){
             if(args==2) {
                 verd(arg);
-            }
-        }
-        else if(strcmp(cmd,"removea")==0) {
-            if(args==2) {
-                removea(arg);
             }
         }
         //fim if e elses dos comandos
