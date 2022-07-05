@@ -232,49 +232,60 @@ int criad(char* path) //cria diretorio
     return 1;
 }
 
-int removed(char* path) //cria diretorio
-{
+
+int removed(char* path){
     struct setor setorr;
     struct setor setorrr;
-    int endereco;
-    int aux = 0,i, aux2,cond,j;
+    int found = 0;
+    int i = 0;
     read_disco(9, &setorr);
+    char delim[] = "\\";
 
-    char *ptr = strtok(path, "\\");
-
-    while(ptr != NULL && aux < 8){//enquanto n for null continua (pode ter subdiretorio)
-        i = 0;
-        aux2 = 0;
-        for(i = 0; i < SETORES -1 && aux2 == 0; i++){ //procurar diretorio
+    char *ptr = strtok(path, delim);
+    while(ptr != NULL){
+        if(found == 1){
+            read_disco(setorrr.endereco, &setorr);
+        }
+        found = 0;
+        for(i = 0; i < SETORES -1 && found == 0; i++){
             fflush(stdout);
             if(setorr.ponteiros[i] != 0){
                 read_disco(setorr.ponteiros[i], &setorrr);
-                if(strcmp(ptr, setorrr.nome)==0) {//achou
-                    printf("Diretorio %s\n", setorrr.nome);
-                    aux2 = 1;
-                    endereco = setorr.ponteiros[i];
-                    read_disco(setorr.ponteiros[i], &setorr);
+                if(!strcmp(ptr, setorrr.nome)) {
+                    found = 1;
                 }
             }
         }
-        if(aux2 == 1){ //achou o diretorio, entao ira rescreve-lo
-            setorrr = func_setor("", 0,0);
-            write_disco(endereco, setorrr);
-            fflush(stdout);
-            write_disco(setorr.endereco, setorr);
-            printf("Excluido na pos %d\n", i-1);
-            //read_disco(i-1, &setorr);
+        if(found == 0){
+            printf("Diretorio nao encontrado\n");
+            break;
         }
-        ptr = strtok(NULL, "\\");
-        aux++;
+        ptr = strtok(NULL, delim);
         fflush(stdout);
     }
-    if(aux >= 8)
-        printf("O tamanho maximo é 8\n");
-
+    if(found != 0){
+        int insideDirectories = 0;
+        for(i = 0; i< SETORES -1 && insideDirectories == 0; i++){
+            if(setorrr.ponteiros[i] != 0){
+                printf("Diretorio nao vazio \n");
+                insideDirectories = 1;
+            }
+        }
+            if(insideDirectories == 0){
+            for(i = 0; i < SETORES -1; i++){
+            if(setorr.ponteiros[i] == setorrr.endereco){
+                setorr.ponteiros[i] = 0;
+                write_disco(setorr.endereco, setorr);
+            }
+            }
+            write_disco(setorrr.endereco, func_setor("", 0,0));
+            printf("diretorio %s deletado\n", setorrr.nome);
+        }
+    }
     fflush(stdout);
     return 1;
 }
+
 
 int verd(char* path){
     struct setor setorr;
@@ -407,6 +418,9 @@ int main(int argc, char *argv[]){
             if(args==2) {
                 verd(arg);
             }
+        }
+        else{
+            printf("Comando não encontrado\nUse ajuda\n");
         }
         //fim if e elses dos comandos
     }
