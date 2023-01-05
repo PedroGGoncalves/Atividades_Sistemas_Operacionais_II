@@ -1,11 +1,15 @@
 # Atividades_Sistemas_Operacionais_II
 
 ## 🚀 Grupo de cada atividade
+* MyMiniShell
+ * Pedro Gonçalves
 * Projeto 2
   * Lucas Bastelli
-  *Pedro Gonçalves
+  * Pedro Gonçalves
   
 ## 📋 Descrição de cada atividade
+### MyMiniShell
+
 ### Projeto 2
 Foi implementado um simulador de um sistema de arquivos, utilizando a linguagem C, que possui as seguintes 
 características:
@@ -35,4 +39,6 @@ disponíveis no sistema.
 - O simulador deve fornecer um comando sair que pode ser usado para encerrar o simulador.
 
 ## ⚙️ Arquivos
+* myminish.c - Código referente a atividade MyMiniShell
 * p2.c - Código referente ao Projeto 2
+
