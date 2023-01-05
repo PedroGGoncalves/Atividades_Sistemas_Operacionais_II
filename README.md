@@ -6,7 +6,7 @@ Atividades e projetos feitos na linguagem C, para avaliação na disciplina Sist
 * Thread Barbeiro
 * Projeto 1
   
-## Atividades em grupo
+## 🚀 Atividades em grupo
 * Projeto 2
   * Lucas Bastelli
   * Pedro Gonçalves
