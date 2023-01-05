@@ -1,8 +1,11 @@
 # Atividades_Sistemas_Operacionais_II
 
-## 🚀 Grupo de cada atividade
+## 🚀 Atividade feitas individualmente
 * MyMiniShell
-  * Pedro Gonçalves
+* Thread Barbeiro
+* Projeto 1
+  
+## Atividades em grupo
 * Projeto 2
   * Lucas Bastelli
   * Pedro Gonçalves
@@ -14,6 +17,14 @@
 3. Quando a entrada é o nome de um programa no path ou o caminho de  um programa, o mesmo deve ser executado 
 4. Quando a entrada não é um programa no path ou caminho válido, deve  ser mostrada uma mensagem de erro adequada 
 5. Os argumentos digitados na linha de comando devem ser passados ao  programa chamado
+
+### Thread Barbeiro
+– Uma barbearia tem n barbeiros com suas respectivas cadeiras de barbeiro e m cadeiras para  clientes esperarem por sua vez na sala de espera 
+– Quando não há clientes, o barbeiro se senta na cadeira e dorme 
+– Quando chega um cliente: 
+• Se um barbeiro está disponível, ele precisa acordá-lo 
+• Se todos os barbeiros estão ocupados, o cliente senta-se em uma das cadeiras na sala de espera e espera sua  vez 
+• Se não há cadeiras disponíveis na sala de espera, o cliente vai embora
 
 ### Projeto 2
 Foi implementado um simulador de um sistema de arquivos, utilizando a linguagem C, que possui as seguintes 
@@ -45,5 +56,6 @@ disponíveis no sistema.
 
 ## ⚙️ Arquivos
 * myminish.c - Código referente a atividade MyMiniShell
+* barbeiro.c - Código referente a atividade Thread Barbeiro
 * p2.c - Código referente ao Projeto 2
 
