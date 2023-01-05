@@ -2,13 +2,18 @@
 
 ## 🚀 Grupo de cada atividade
 * MyMiniShell
- * Pedro Gonçalves
+  * Pedro Gonçalves
 * Projeto 2
   * Lucas Bastelli
   * Pedro Gonçalves
   
 ## 📋 Descrição de cada atividade
 ### MyMiniShell
+1. Exibe um prompt e aguarda entrada do usuário 
+2. O comando exit deve sair do processador de comandos 
+3. Quando a entrada é o nome de um programa no path ou o caminho de  um programa, o mesmo deve ser executado 
+4. Quando a entrada não é um programa no path ou caminho válido, deve  ser mostrada uma mensagem de erro adequada 
+5. Os argumentos digitados na linha de comando devem ser passados ao  programa chamado
 
 ### Projeto 2
 Foi implementado um simulador de um sistema de arquivos, utilizando a linguagem C, que possui as seguintes 
