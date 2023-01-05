@@ -1,5 +1,7 @@
-# Projeto2_SO2
+# Atividades_Sistemas_Operacionais_II
 
+## Projeto 2
+### Descrição
 Foi implementado um simulador de um sistema de arquivos, utilizando a linguagem C, que possui as seguintes 
 características:
 
@@ -26,3 +28,5 @@ sistema de arquivos.
 - O simulador deve oferecer um comando ajuda que quando utilizado mostra quais são os comandos 
 disponíveis no sistema.
 - O simulador deve fornecer um comando sair que pode ser usado para encerrar o simulador.
+
+### Arquivos
