@@ -1,4 +1,5 @@
 # Atividades_Sistemas_Operacionais_II
+Atividades e projetos feitos na linguagem C, para avaliação na disciplina Sistemas Operacionais II (SO2)
 
 ## 🚀 Atividade feitas individualmente
 * MyMiniShell
@@ -20,10 +21,15 @@
 
 ### Thread Barbeiro
 – Uma barbearia tem n barbeiros com suas respectivas cadeiras de barbeiro e m cadeiras para  clientes esperarem por sua vez na sala de espera 
+
 – Quando não há clientes, o barbeiro se senta na cadeira e dorme 
+
 – Quando chega um cliente: 
+
 • Se um barbeiro está disponível, ele precisa acordá-lo 
+
 • Se todos os barbeiros estão ocupados, o cliente senta-se em uma das cadeiras na sala de espera e espera sua  vez 
+
 • Se não há cadeiras disponíveis na sala de espera, o cliente vai embora
 
 ### Projeto 2
