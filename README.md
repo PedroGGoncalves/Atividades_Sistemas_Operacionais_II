@@ -1,7 +1,12 @@
 # Atividades_Sistemas_Operacionais_II
 
-## Projeto 2
-### Descrição
+## 🚀 Grupo de cada atividade
+* Projeto 2
+  * Lucas Bastelli
+  *Pedro Gonçalves
+  
+## 📋 Descrição de cada atividade
+### Projeto 2
 Foi implementado um simulador de um sistema de arquivos, utilizando a linguagem C, que possui as seguintes 
 características:
 
@@ -29,4 +34,5 @@ sistema de arquivos.
 disponíveis no sistema.
 - O simulador deve fornecer um comando sair que pode ser usado para encerrar o simulador.
 
-### Arquivos
+## ⚙️ Arquivos
+* p2.c - Código referente ao Projeto 2
