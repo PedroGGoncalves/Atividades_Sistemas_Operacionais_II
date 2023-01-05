@@ -25,12 +25,9 @@ Atividades e projetos feitos na linguagem C, para avaliação na disciplina Sist
 – Quando não há clientes, o barbeiro se senta na cadeira e dorme 
 
 – Quando chega um cliente: 
-
-  • Se um barbeiro está disponível, ele precisa acordá-lo 
-
-  • Se todos os barbeiros estão ocupados, o cliente senta-se em uma das cadeiras na sala de espera e espera sua  vez 
-
-  • Se não há cadeiras disponíveis na sala de espera, o cliente vai embora
+    • Se um barbeiro está disponível, ele precisa acordá-lo 
+    • Se todos os barbeiros estão ocupados, o cliente senta-se em uma das cadeiras na sala de espera e espera sua  vez 
+    • Se não há cadeiras disponíveis na sala de espera, o cliente vai embora
 
 ### Projeto 2
 Foi implementado um simulador de um sistema de arquivos, utilizando a linguagem C, que possui as seguintes 
