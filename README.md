@@ -33,6 +33,8 @@ Atividades e projetos feitos na linguagem C, para avaliação na disciplina Sist
     • Se não há cadeiras disponíveis na sala de espera, o cliente vai embora
 
 ### Projeto 1
+Foi implementado um processador de comandos do Linux em C, que possui as seguintes características:
+
 - Exibe um prompt e aguarda entrada do usuário
 - O comando exit deve sair do processador de comandos.
 - Quando a entrada do usuário é o nome de um programa no path ou o caminho
@@ -57,8 +59,7 @@ separação entre cada programa, conectando a saída padrão do programa à esqu
 com a entrada padrão do programa à direita através de um pipe.
 
 ### Projeto 2
-Foi implementado um simulador de um sistema de arquivos, utilizando a linguagem C, que possui as seguintes 
-características:
+Foi implementado um simulador de um sistema de arquivos, utilizando a linguagem C, que possui as seguintes características:
 
 - Simular um disco com 256 setores de 512 bytes. Considere que os 10 primeiros setores são ocupados 
 pelo setor de boot, sistema de arquivos e o diretório raiz, ficando os demais setores disponíveis para dados 
